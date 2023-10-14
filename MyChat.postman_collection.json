@@ -1,0 +1,699 @@
+{
+	"info": {
+		"_postman_id": "1386ccff-1375-46ac-9977-8382a932ef3a",
+		"name": "MyChat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14778358"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response has the required field - token\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.token).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Token is a non-empty string\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Token is in a valid format\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "Create Group",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"test_grp_2\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/groups",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Members to Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the _id field is not empty\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData._id).to.exist.and.to.not.be.empty;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the name field is not empty\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData.name).to.exist.and.to.not.be.empty;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the members field is an array and not empty\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData.members).to.be.an('array', \"Members should be an array\");",
+									"  pm.expect(responseData.members).to.have.lengthOf.at.least(1, \"Members array should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Verify that the __v field is a non-negative integer\", function () {",
+									"  const responseData = pm.response.json();",
+									"",
+									"  pm.expect(responseData).to.be.an('object');",
+									"  pm.expect(responseData.__v).to.exist.and.to.be.a('number');",
+									"  pm.expect(responseData.__v).to.be.at.least(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userIds\": [\r\n        \"65261f303680a271ec974ccf\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/groups/65261f413680a271ec974cd2/members",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								"65261f413680a271ec974cd2",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the response body is an array\", function () {",
+									"  pm.expect(pm.response.json()).to.be.an('array');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Each group object has the required fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    ",
+									"    responseData.forEach(function(group) {",
+									"        pm.expect(group._id).to.exist.and.to.be.a('string');",
+									"        pm.expect(group.name).to.exist.and.to.be.a('string');",
+									"        pm.expect(group.members).to.exist.and.to.be.an('array');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Each member in the 'members' array is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    ",
+									"    responseData.forEach(function (group) {",
+									"        pm.expect(group.members).to.be.an('array');",
+									"        ",
+									"        group.members.forEach(function (member) {",
+									"            pm.expect(member).to.be.a('string').and.to.not.be.empty;",
+									"        });",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Verify the __v field is present and has a value of 0 in each group object\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+									"  ",
+									"  responseData.forEach(function(group) {",
+									"    pm.expect(group).to.have.property(\"__v\", 0);",
+									"  });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/groups/search?query=test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "test"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all members of a group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the response is an array with at least one element\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array').and.to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Each element in the response has _id and username fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+									"    ",
+									"    responseData.forEach(function (element) {",
+									"        pm.expect(element._id).to.exist;",
+									"        pm.expect(element.username).to.exist;",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Verify _id field is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    ",
+									"    responseData.forEach(function(member) {",
+									"        pm.expect(member._id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Verify the username field is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    ",
+									"    responseData.forEach(function(member) {",
+									"        pm.expect(member.username).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjYxZjMwMzY4MGEyNzFlYzk3NGNjZiIsInVzZXJuYW1lIjoia2FtbGVzaF95IiwiaWF0IjoxNjk2OTk3MTY4fQ.hpwdi_o5DF-9ACos4b0sFHnmRGxeAaCDnpMlgwYOB9w"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/groups/65261f413680a271ec974cd2/members",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								"65261f413680a271ec974cd2",
+								"members"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Messages",
+			"item": [
+				{
+					"name": "Send Message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response has all required fields\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData).to.be.an('object');",
+									"  pm.expect(responseData.content).to.exist;",
+									"  pm.expect(responseData.groupId).to.exist;",
+									"  pm.expect(responseData.userId).to.exist;",
+									"  pm.expect(responseData.likes).to.exist;",
+									"  pm.expect(responseData._id).to.exist;",
+									"  pm.expect(responseData.__v).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Content is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.content).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Content should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"GroupId and userId are non-empty strings\", function () {",
+									"    const responseData = pm.response.json();",
+									"",
+									"    pm.expect(responseData.groupId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"GroupId should not be empty\");",
+									"    pm.expect(responseData.userId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"UserId should not be empty\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Likes is an array\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData.likes).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjhlNmRhOTIwNTNhNDYwMDBhNTdmOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE2OTcxODQ5MDV9.vYgNKVJaobyr5F7bIvNLiBxnK7XZ1SgXPB8W7MG4pb0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"groupId\": \"65261f413680a271ec974cd2\",\r\n    \"content\": \"Test message in test grp 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/messages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/messages/65261fad3680a271ec974cdd/like",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages",
+								"65261fad3680a271ec974cdd",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit message",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjhlNmRhOTIwNTNhNDYwMDBhNTdmOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE2OTcxODQ5MDV9.vYgNKVJaobyr5F7bIvNLiBxnK7XZ1SgXPB8W7MG4pb0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"Updated message\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/messages/652a8834eff4ed248bff5397",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"messages",
+								"652a8834eff4ed248bff5397"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "User Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjhlNmRhOTIwNTNhNDYwMDBhNTdmOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE2OTcxODQ5MDV9.vYgNKVJaobyr5F7bIvNLiBxnK7XZ1SgXPB8W7MG4pb0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"User4\",\r\n    \"password\": \"User4\",\r\n    \"isAdmin\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjhlNmRhOTIwNTNhNDYwMDBhNTdmOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE2OTcxODQ5MDV9.vYgNKVJaobyr5F7bIvNLiBxnK7XZ1SgXPB8W7MG4pb0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"UpdatedUser\",\r\n    \"password\": \"UpdatedUser\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/652a801daa94b7a4a7b060f0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"652a801daa94b7a4a7b060f0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjhlNmRhOTIwNTNhNDYwMDBhNTdmOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE2OTcxODQ5MDV9.vYgNKVJaobyr5F7bIvNLiBxnK7XZ1SgXPB8W7MG4pb0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/652a835c7cd433aeb9ab5c09",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"652a835c7cd433aeb9ab5c09"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search a user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjhlNmRhOTIwNTNhNDYwMDBhNTdmOSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE2OTcxODQ5MDV9.vYgNKVJaobyr5F7bIvNLiBxnK7XZ1SgXPB8W7MG4pb0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/search?q=User",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "User"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MjU3ODQ5ZWU1OTQ4MGRmYzY0NTUzYSIsInVzZXJuYW1lIjoicm9oaXRfYyIsImlhdCI6MTY5Njk5NDI1M30.887W9PXenXAhp3oOl-5BFPEwfTDUxQpY46iWh1ocBmA",
+			"type": "string"
+		}
+	]
+}

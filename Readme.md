@@ -54,6 +54,9 @@ Provide step-by-step installation instructions. For example:
    npm start
    ```
 
+5. Import Postman collection.
+
+
 ## Running Test Cases
 
 
